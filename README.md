@@ -6,9 +6,16 @@ The extension is built with Manifest V3 and vanilla JavaScript. It scans the cur
 
 This is intentionally a small utility: no backend, no build step, and no broad crawling beyond the page you are using.
 
-## Download
+## Install from ZIP
 
-[Download the latest ZIP](https://github.com/pes-tools/pesu-slide-downloader/archive/refs/heads/main.zip)
+1. Download the latest ZIP from this repository.
+2. Extract the ZIP file.
+3. Open Chrome and go to `chrome://extensions`.
+4. Enable **Developer mode**.
+5. Click **Load unpacked**.
+6. Select the extracted `pesu-slide-downloader-main` folder, the one that contains `manifest.json`.
+7. Pin **PESU Slide Downloader** from the extensions menu if you want quick access.
+
 
 ## Unofficial Project
 
@@ -24,15 +31,6 @@ The extension icon is intentionally custom and does not use the PES University l
 - `content.js` - PESU page scanner, including open shadow-root scanning.
 - `background.js` - Download queues, ZIP creation, and direct-download path handling.
 - `icons/` - Custom unofficial extension icons.
-
-## Load the Extension in Chrome
-
-1. Open Chrome.
-2. Go to `chrome://extensions`.
-3. Enable **Developer mode**.
-4. Click **Load unpacked**.
-5. Select this folder: `PESU_Web_Extension`.
-6. Pin **PESU Slide Downloader** from the extensions menu if you want quick access.
 
 ## How to Use
 
