@@ -1,0 +1,339 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>PESU Slide Downloader</title>
+    <style>
+      :root {
+        color-scheme: light;
+        --bg: #f6f8fb;
+        --surface: #ffffff;
+        --surface-2: #eef3f8;
+        --text: #122033;
+        --muted: #66758b;
+        --subtle: #d9e2ec;
+        --hairline: #e6edf5;
+        --accent: #005dab;
+        --accent-2: #0f7bd8;
+        --accent-soft: #e8f2fc;
+        --danger: #b42318;
+        --danger-soft: #fff0ed;
+        --shadow: 0 12px 30px rgba(18, 32, 51, 0.12);
+        font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+        color: var(--text);
+        background: var(--bg);
+      }
+
+      :root[data-theme="dark"] {
+        color-scheme: dark;
+        --bg: #101621;
+        --surface: #172030;
+        --surface-2: #202b3c;
+        --text: #edf4ff;
+        --muted: #9fb0c5;
+        --subtle: #334258;
+        --hairline: #26354a;
+        --accent: #5fb0ff;
+        --accent-2: #8dc8ff;
+        --accent-soft: #163657;
+        --danger: #ff8b7f;
+        --danger-soft: #3d211f;
+        --shadow: 0 12px 30px rgba(0, 0, 0, 0.28);
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        width: 368px;
+        margin: 0;
+        padding: 10px;
+        background: transparent;
+      }
+
+      .shell {
+        border-radius: 24px;
+        background: radial-gradient(circle at top right, var(--accent-soft), transparent 230px), var(--bg);
+        overflow: hidden;
+      }
+
+      .panel {
+        overflow: hidden;
+        border: 1px solid color-mix(in srgb, var(--hairline) 88%, transparent);
+        border-radius: 24px;
+        background: color-mix(in srgb, var(--surface) 96%, transparent);
+        box-shadow: var(--shadow);
+      }
+
+      header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+        padding: 16px 16px 12px;
+        border-bottom: 1px solid var(--hairline);
+      }
+
+      h1 {
+        margin: 0;
+        font-size: 17px;
+        line-height: 1.15;
+        letter-spacing: 0;
+      }
+
+      .hint {
+        margin: 4px 0 0;
+        color: var(--muted);
+        font-size: 12px;
+      }
+
+      .header-actions {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+
+      .content {
+        padding: 14px 16px 16px;
+      }
+
+      label {
+        display: block;
+        margin: 0 0 7px;
+        font-size: 12px;
+        font-weight: 700;
+        color: color-mix(in srgb, var(--text) 82%, var(--muted));
+      }
+
+      input[type="text"] {
+        width: 100%;
+        min-height: 38px;
+        padding: 9px 11px;
+        border: 1px solid var(--subtle);
+        border-radius: 10px;
+        outline: none;
+        background: var(--surface);
+        color: var(--text);
+        font-size: 13px;
+        transition: border-color 140ms ease, box-shadow 140ms ease, background 140ms ease;
+      }
+
+      input[type="text"]:focus {
+        border-color: var(--accent);
+        box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent) 18%, transparent);
+      }
+
+      button {
+        min-height: 38px;
+        border: 1px solid transparent;
+        border-radius: 10px;
+        padding: 8px 12px;
+        font-size: 13px;
+        font-weight: 700;
+        cursor: pointer;
+        transition: transform 120ms ease, background 140ms ease, border-color 140ms ease, opacity 140ms ease;
+      }
+
+      button:hover:not(:disabled) {
+        transform: translateY(-1px);
+      }
+
+      button:active:not(:disabled) {
+        transform: translateY(0);
+      }
+
+      button:disabled {
+        cursor: not-allowed;
+        opacity: 0.55;
+      }
+
+      .primary {
+        background: linear-gradient(180deg, var(--accent-2), var(--accent));
+        color: #ffffff;
+      }
+
+      .secondary {
+        border-color: var(--subtle);
+        background: var(--surface-2);
+        color: var(--text);
+      }
+
+      .danger {
+        background: var(--danger-soft);
+        color: var(--danger);
+      }
+
+      .icon-button {
+        min-width: 52px;
+        padding: 0;
+        border-color: var(--subtle);
+        background: var(--surface);
+        color: var(--text);
+        font-size: 12px;
+        line-height: 1;
+      }
+
+      .actions {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 10px;
+        margin-top: 12px;
+      }
+
+      .actions .full {
+        grid-column: 1 / -1;
+      }
+
+      .status {
+        display: flex;
+        align-items: center;
+        min-height: 19px;
+        margin-top: 12px;
+        color: var(--muted);
+        font-size: 12px;
+      }
+
+      progress {
+        width: 100%;
+        height: 7px;
+        margin-top: 8px;
+        border: 0;
+        border-radius: 999px;
+        overflow: hidden;
+        appearance: none;
+        background: var(--surface-2);
+      }
+
+      progress::-webkit-progress-bar {
+        border-radius: 999px;
+        background: var(--surface-2);
+      }
+
+      progress::-webkit-progress-value {
+        border-radius: 999px;
+        background: linear-gradient(90deg, var(--accent), var(--accent-2));
+      }
+
+      .file-list {
+        max-height: 260px;
+        overflow: auto;
+        margin: 14px 0 0;
+        border: 1px solid var(--hairline);
+        border-radius: 14px;
+        background: var(--surface);
+      }
+
+      .empty {
+        padding: 20px 14px;
+        color: var(--muted);
+        font-size: 13px;
+        text-align: center;
+      }
+
+      .file-item {
+        display: grid;
+        grid-template-columns: 20px 1fr;
+        gap: 10px;
+        align-items: start;
+        padding: 11px 12px;
+        border-bottom: 1px solid var(--hairline);
+        cursor: pointer;
+      }
+
+      .file-item:hover {
+        background: color-mix(in srgb, var(--accent-soft) 58%, transparent);
+      }
+
+      .file-item:last-child {
+        border-bottom: 0;
+      }
+
+      input[type="checkbox"] {
+        width: 16px;
+        height: 16px;
+        margin: 1px 0 0;
+        accent-color: var(--accent);
+      }
+
+      .file-name {
+        overflow-wrap: anywhere;
+        font-size: 13px;
+        font-weight: 650;
+        color: var(--text);
+      }
+
+      .file-meta {
+        margin-top: 5px;
+        overflow-wrap: anywhere;
+        color: var(--muted);
+        font-size: 11px;
+        line-height: 1.35;
+      }
+
+      .badge {
+        display: inline-block;
+        margin-right: 6px;
+        padding: 2px 6px;
+        border-radius: 999px;
+        background: var(--accent-soft);
+        color: var(--accent);
+        font-size: 10px;
+        font-weight: 700;
+        text-transform: uppercase;
+      }
+
+      .file-list::-webkit-scrollbar {
+        width: 10px;
+      }
+
+      .file-list::-webkit-scrollbar-track {
+        background: transparent;
+      }
+
+      .file-list::-webkit-scrollbar-thumb {
+        border: 3px solid transparent;
+        border-radius: 999px;
+        background: color-mix(in srgb, var(--muted) 45%, transparent);
+        background-clip: padding-box;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="shell">
+      <div class="panel">
+        <header>
+          <div>
+            <h1>PESU Slide Downloader</h1>
+            <p class="hint">Scan, zip, and file away course material.</p>
+          </div>
+          <div class="header-actions">
+            <button id="themeToggle" class="icon-button" type="button" title="Toggle dark mode" aria-label="Toggle dark mode">Dark</button>
+            <button id="scanPage" class="primary" type="button">Scan</button>
+          </div>
+        </header>
+
+        <main class="content">
+          <label for="folderPrefix">ZIP name</label>
+          <input id="folderPrefix" type="text" value="CourseMaterials" autocomplete="off" spellcheck="false">
+
+          <div id="status" class="status" role="status">Open a PESU slide page and scan.</div>
+          <progress id="progress" value="0" max="1" aria-label="Download progress"></progress>
+
+          <div id="fileList" class="file-list" aria-live="polite">
+            <div class="empty">No files discovered yet.</div>
+          </div>
+
+          <div class="actions">
+            <button id="downloadSelected" class="secondary" type="button" disabled>Download Selected</button>
+            <button id="downloadAll" class="primary" type="button" disabled>Download ZIP</button>
+            <button id="retryFailed" class="danger full" type="button" hidden>Retry Failed Downloads</button>
+          </div>
+        </main>
+      </div>
+    </div>
+
+    <script src="popup.js"></script>
+  </body>
+</html>
